@@ -1,0 +1,63 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// Enum untuk status yang dikelola oleh service ini
+enum StatusPendaftaran {
+  BARU_MENGISI_FORMULIR
+  MENUNGGU_VALIDASI_ADMIN
+  DATA_LENGKAP
+  PERLU_PERBAIKAN
+}
+
+model Pendaftaran {
+  id                String    @id @default(cuid())
+  nomorPendaftaran  String    @unique
+  // --- REFERENSI ke service lain ---
+  // ID dari Calon Mahasiswa yang login, didapat dari Konteks Pengguna & Akses
+  calonMahasiswaId  String
+  // ID dari gelombang yang dipilih, didapat dari Konteks Informasi & Konfigurasi
+  gelombangId       String
+
+  // Data yang dimiliki dan dikelola oleh service ini
+  dataFormulir      Json      // Data dinamis dari formulir (nama, tgl lahir, dll) 
+  status            StatusPendaftaran @default(BARU_MENGISI_FORMULIR)
+  catatanAdmin      String?   // Catatan dari admin jika ada perbaikan
+
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  // Relasi ke Dokumen yang merupakan bagian dari Aggregate Pendaftaran
+  dokumenPersyaratan DokumenPersyaratan[]
+
+  @@map("pendaftaran")
+  @@index([calonMahasiswaId])
+}
+
+model DokumenPersyaratan {
+  id                String    @id @default(cuid())
+  pendaftaranId     String
+  pendaftaran       Pendaftaran @relation(fields: [pendaftaranId], references: [id])
+
+  namaDokumen       String    // misal: "KTP", "Raport Semester 5" 
+  urlPenyimpanan    String    // Path atau URL ke file di storage
+  statusValidasi    String    @default("MENUNGGU_VALIDASI") // MENUNGGU_VALIDASI, VALID, TIDAK_VALID
+  catatanValidasi   String?
+  isValid           Boolean   @default(false) // Untuk menandai apakah dokumen valid atau tidak
+
+  createAt      DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@map("dokumen_persyaratan")
+}

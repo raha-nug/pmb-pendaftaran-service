@@ -1,0 +1,23 @@
+{
+  "name": "pendaftaran-service",
+  "version": "1.0.0",
+  "description": "Service untuk pendaftaran, menangani seluruh tahapan pendaftaran",
+  "license": "ISC",
+  "author": "Rival Nugraha",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "dev": "nodemon server.js"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10",
+    "prisma": "^6.10.1"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.10.1",
+    "dotenv": "^16.6.1",
+    "express": "^5.1.0",
+    "multer": "^2.0.1",
+    "zod": "^3.25.67"
+  }
+}
