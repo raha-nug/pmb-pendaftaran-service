@@ -4,7 +4,7 @@ import "dotenv/config";
 const app = express();
 const PORT = process.env.PORT || 3001;
 import pendaftaranRoute from "./src/interfaces/routes/pendaftaranRoute.js";
-import { verifyUserToken } from "./src/interfaces/http/middlewares/verifAuth.js";
+import { verifyUserToken } from "./src/interfaces/http/middlewares/authenticate.js";
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
