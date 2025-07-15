@@ -7,7 +7,8 @@
   "type": "module",
   "main": "server.js",
   "scripts": {
-    "dev": "nodemon server.js"
+    "dev": "nodemon server.js",
+    "start": "server.js"
   },
   "devDependencies": {
     "nodemon": "^3.1.10",
