@@ -1,4 +1,3 @@
-import fs from "fs/promises"; // Impor modul 'fs' untuk operasi file
 import * as aplicationService from "../../application/pendaftaranAplicationService.js";
 
 /**
@@ -53,9 +52,7 @@ export const addDokumen = async (req, res) => {
       data: pendaftaran,
     });
   } catch (error) {
-    if (req.file) {
-      await fs.unlink(req.file.path);
-    }
+   
     res.status(400).json({ message: error.message });
   }
 };

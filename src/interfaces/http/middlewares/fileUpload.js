@@ -1,11 +1,11 @@
 import multer from "multer";
 import path from "path";
-import fs from "fs";
 import { Client } from "basic-ftp";
 import dotenv from "dotenv";
+import stream from "stream";
 dotenv.config();
 
-async function uploadToFTP(localPath, remoteFilename) {
+async function uploadToFTP(buffer, remoteFilename) {
   const client = new Client();
   try {
     await client.access({
@@ -16,8 +16,12 @@ async function uploadToFTP(localPath, remoteFilename) {
     });
 
     await client.ensureDir(process.env.FTP_REMOTE_DIR);
+
+    const passThrough = new stream.PassThrough();
+    passThrough.end(buffer);
+
     await client.uploadFrom(
-      localPath,
+      passThrough,
       `${process.env.FTP_REMOTE_DIR}/${remoteFilename}`
     );
     client.close();
@@ -27,7 +31,6 @@ async function uploadToFTP(localPath, remoteFilename) {
     return false;
   }
 }
-
 
 export async function deleteFromFTP(remotePath) {
   const client = new Client();
@@ -40,7 +43,7 @@ export async function deleteFromFTP(remotePath) {
     });
 
     await client.remove(remotePath);
-     client.close();
+    client.close();
     return true;
   } catch (err) {
     console.error("FTP Delete Error:", err);
@@ -48,18 +51,10 @@ export async function deleteFromFTP(remotePath) {
   }
 }
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "uploads/");
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(
-      null,
-      file.fieldname + "-" + uniqueSuffix + path.extname(file.originalname)
-    );
-  },
-});
+const storage = multer.memoryStorage();
+
+
+
 
 const fileFilter = (req, file, cb) => {
   const allowedMimeTypes = ["image/jpeg", "image/png", "application/pdf"];
@@ -84,21 +79,25 @@ const upload = multer({
 export const uploadSingleFile = upload.single("filePersyaratan");
 
 export const ftpUploadMiddleware = async (req, res, next) => {
-  if (!req.file) {
-    return res.status(400).json({ message: "File tidak ditemukan" });
-  }
+ if (!req.file) {
+   return res.status(400).json({ message: "File tidak ditemukan" });
+ }
 
-  const localPath = req.file.path;
-  const remoteFilename = req.file.filename;
+ // Generate nama file unik
+ const ext = path.extname(req.file.originalname);
+ const remoteFilename = `filePersyaratan-${Date.now()}-${Math.round(
+   Math.random() * 1e9
+ )}${ext}`;
 
-  const success = await uploadToFTP(localPath, remoteFilename);
+ // Upload dari buffer
+ const success = await uploadToFTP(req.file.buffer, remoteFilename);
 
-  fs.unlinkSync(localPath); // Hapus file lokal
+ if (!success) {
+   return res.status(500).json({ message: "Gagal upload ke FTP" });
+ }
 
-  if (!success) {
-    return res.status(500).json({ message: "Gagal upload ke FTP" });
-  }
 
-  req.uploadedFileUrl = `https://${process.env.FTP_HOST}/file_persyaratan/${remoteFilename}`;
+  // Simpan URL ke dalam request
+  req.uploadedFileUrl = `https://${process.env.FTP_HOST}/${process.env.FTP_REMOTE_DIR || "file_persyaratan"}/${remoteFilename}`;
   next();
 };

@@ -8,7 +8,8 @@
   "main": "server.js",
   "scripts": {
     "dev": "nodemon server.js",
-    "start": "server.js"
+    "start": "server.js",
+    "vercel-build": "prisma generate"
   },
   "devDependencies": {
     "nodemon": "^3.1.10",
@@ -21,6 +22,7 @@
     "dotenv": "^16.6.1",
     "express": "^5.1.0",
     "multer": "^2.0.1",
+    "stream": "^0.0.3",
     "zod": "^3.25.67"
   }
 }
