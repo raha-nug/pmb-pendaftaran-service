@@ -48,7 +48,7 @@ model Pendaftaran {
 model DokumenPersyaratan {
   id                String    @id @default(cuid())
   pendaftaranId     String
-  pendaftaran       Pendaftaran @relation(fields: [pendaftaranId], references: [id])
+  pendaftaran       Pendaftaran @relation(fields: [pendaftaranId], references: [id],onDelete: Cascade)
 
   namaDokumen       String    // misal: "KTP", "Raport Semester 5" 
   urlPenyimpanan    String    // Path atau URL ke file di storage
