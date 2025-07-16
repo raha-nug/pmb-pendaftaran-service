@@ -15,7 +15,6 @@ export const createInitialPendaftaranUseCase = async (useCaseData) => {
     dataFormulir,
   });
 
-
   const savedPendaftaran = await pendaftaranRepository.save(pendaftaranState);
 
   // Terbitkan event
@@ -50,7 +49,7 @@ export const addDokumenUseCase = async (useCaseData) => {
   );
 
   // 3. Simpan state aggregate yang baru ke database
-  const savedPendaftaran = await pendaftaranRepository.update(
+  const savedPendaftaran = await pendaftaranRepository.addDokumenByPendaftaran(
     pendaftaranId,
     pendaftaranBaru
   );
@@ -82,7 +81,7 @@ export const deleteDokumenUseCase = async ({ dokumenId, userId }) => {
   const parsedUrl = new URL(url);
   const remotePath = parsedUrl.pathname.slice(1); // Hilangkan '/' di awal
 
-  console.log(remotePath)
+  console.log(remotePath);
 
   const deleted = await deleteFromFTP(`${remotePath}`);
   if (!deleted) throw new Error("Gagal menghapus file di server FTP");
@@ -91,7 +90,7 @@ export const deleteDokumenUseCase = async ({ dokumenId, userId }) => {
 };
 
 export const validatePendaftaranUseCase = async (useCaseData) => {
-  const { pendaftaranId, isValid, catatanAdmin } = useCaseData;
+  const { pendaftaranId, userId, pendaftaranData } = useCaseData;
 
   // 1. Ambil aggregate pendaftaran yang ada dari database
   const pendaftaranSaatIni = await pendaftaranRepository.findById(
@@ -104,7 +103,7 @@ export const validatePendaftaranUseCase = async (useCaseData) => {
   // 2. Gunakan fungsi domain untuk validasi pendaftaran
   const pendaftaranBaru = pendaftaranDomain.validasiPendaftaran(
     pendaftaranSaatIni,
-    { isValid, catatanAdmin }
+    pendaftaranData
   );
 
   // 3. Simpan state aggregate yang baru ke database
@@ -144,13 +143,12 @@ export const getPendaftaranByCalonMahasiswaIdUseCase = async (
 export const updatePendaftaranUseCase = async ({
   pendaftaranId,
   userId,
-  dataUpdate,
+  pendaftaranData,
 }) => {
   const pendaftaranSaatIni = await pendaftaranRepository.findById(
     pendaftaranId
   );
 
-  console.log("Pendaftaran Saat Ini:", pendaftaranSaatIni);
   if (!pendaftaranSaatIni) throw new Error("Pendaftaran tidak ditemukan.");
   if (pendaftaranSaatIni.calonMahasiswaId !== userId)
     throw new Error("Akses ditolak.");
@@ -158,12 +156,8 @@ export const updatePendaftaranUseCase = async ({
   // Panggil fungsi domain untuk update
   const pendaftaranBaru = pendaftaranDomain.updateDataFormulir(
     pendaftaranSaatIni,
-    dataUpdate.dataFormulir
+    pendaftaranData
   );
-
-  console.log("Data Formulir Baru:", dataUpdate.dataFormulir);
-
-  console.log("Pendaftaran Baru Setelah Update:", pendaftaranBaru);
 
   // Simpan ke DB
   const updatedPendaftaran = await pendaftaranRepository.update(
@@ -182,12 +176,12 @@ export const deletePendaftaranUseCase = async ({ pendaftaranId, userId }) => {
   // Hapus file fisik terlebih dahulu
   for (const doc of pendaftaran.dokumenPersyaratan) {
     try {
-       const url = doc.urlPenyimpanan;
-       const parsedUrl = new URL(url);
-       const remotePath = parsedUrl.pathname.slice(1); // Hilangkan '/' di awal
+      const url = doc.urlPenyimpanan;
+      const parsedUrl = new URL(url);
+      const remotePath = parsedUrl.pathname.slice(1); // Hilangkan '/' di awal
 
-       const deleted = await deleteFromFTP(`${remotePath}`);
-       if (!deleted) throw new Error("Gagal menghapus file di server FTP");
+      const deleted = await deleteFromFTP(`${remotePath}`);
+      if (!deleted) throw new Error("Gagal menghapus file di server FTP");
     } catch (err) {
       // Log error jika file tidak ditemukan, tapi lanjutkan proses
       console.error(`Gagal menghapus file ${doc.urlPenyimpanan}:`, err.message);
@@ -199,3 +193,4 @@ export const deletePendaftaranUseCase = async ({ pendaftaranId, userId }) => {
   await pendaftaranRepository.deleteById(pendaftaranId);
   return { message: "Pendaftaran dan semua dokumen terkait berhasil dihapus." };
 };
+

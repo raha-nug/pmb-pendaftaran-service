@@ -48,23 +48,22 @@ export const createPendaftaran = async ({
 
 export const tambahDokumen = (pendaftaran, namaDokumen, urlPenyimpanan) => {
   // Mengembalikan salinan baru dari pendaftaran dengan dokumen tambahan (prinsip immutability)
+
   return {
     ...pendaftaran,
+    status: "MENUNGGU_VALIDASI_ADMIN",
     dokumenPersyaratan: [{ namaDokumen, urlPenyimpanan }],
   };
 };
 
-export const validasiPendaftaran = (pendaftaran, { isValid, catatanAdmin }) => {
+export const validasiPendaftaran = (pendaftaran, pendafataranData) => {
   if (pendaftaran.status !== "MENUNGGU_VALIDASI_ADMIN") {
     throw new Error("Pendaftaran tidak dalam status menunggu validasi.");
   }
 
-  const newStatus = isValid ? "DATA_LENGKAP" : "PERLU_PERBAIKAN";
-
   return {
     ...pendaftaran,
-    statusValidasi: newStatus,
-    catatanAdmin: catatanAdmin || null,
+    ...pendafataranData,
   };
 };
 
@@ -76,12 +75,9 @@ export const updateDataFormulir = (pendaftaran, dataFormulirBaru) => {
 
   // Menggabungkan data lama dan baru (data baru akan menimpa yang lama)
   const updatedDataFormulir = {
-    ...pendaftaran.dataFormulir,
+    ...pendaftaran,
     ...dataFormulirBaru,
   };
 
-  return {
-    ...pendaftaran,
-    dataFormulir: updatedDataFormulir,
-  };
+  return updatedDataFormulir;
 };

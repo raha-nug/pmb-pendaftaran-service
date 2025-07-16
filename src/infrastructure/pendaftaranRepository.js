@@ -25,14 +25,10 @@ export const findAll = async () => {
 
 export const update = async (pendaftaranId, pendaftaranData) => {
   const { dokumenPersyaratan, ...dataToUpdate } = pendaftaranData;
-
   return await prisma.pendaftaran.update({
     where: { id: pendaftaranId },
     data: {
       ...dataToUpdate,
-      dokumenPersyaratan: {
-        create: dokumenPersyaratan,
-      },
     },
     include: { dokumenPersyaratan: true },
   });
@@ -63,4 +59,24 @@ export const findDokumenById = async (dokumenId) => {
 
 export const deleteDokumenById = async (dokumenId) => {
   return prisma.dokumenPersyaratan.delete({ where: { id: dokumenId } });
+};
+
+export const addDokumenByPendaftaran = async (
+  pendaftaranId,
+  pendafataranData
+) => {
+  const { dokumenPersyaratan, ...pendaftaran } = pendafataranData;
+
+  return await prisma.pendaftaran.update({
+    where: { id: pendaftaranId },
+    data: {
+      ...pendaftaran,
+      dokumenPersyaratan: {
+        create: dokumenPersyaratan,
+      },
+    },
+    include: {
+      dokumenPersyaratan: true,
+    },
+  });
 };

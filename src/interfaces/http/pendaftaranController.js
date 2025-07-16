@@ -52,7 +52,6 @@ export const addDokumen = async (req, res) => {
       data: pendaftaran,
     });
   } catch (error) {
-   
     res.status(400).json({ message: error.message });
   }
 };
@@ -108,13 +107,16 @@ export const getPendaftaranById = async (req, res) => {
 
 export const updatePendaftaran = async (req, res) => {
   try {
-    if (req.user.role === "ADMIN") {
-      const useCaseData = {
-        pendaftaranId: req.params.pendaftaranId,
-        isValid: req.body.isValid,
-        catatanAdmin: req.body.catatanAdmin,
-      };
+    const useCaseData = {
+      pendaftaranId: req.params.pendaftaranId,
+      userId:req.user.id,
+      pendaftaranData : req.body
+    };
 
+    console.log("PENDAFTAR CONTROLLER", useCaseData)
+
+
+    if (req.user.role === "ADMIN") {
       const pendaftaran = await aplicationService.validatePendaftaranUseCase(
         useCaseData
       );
@@ -124,12 +126,6 @@ export const updatePendaftaran = async (req, res) => {
         data: pendaftaran,
       });
     } else if (req.user.role === "CALON_MAHASISWA") {
-      const useCaseData = {
-        pendaftaranId: req.params.pendaftaranId,
-        userId: req.user.id,
-        dataUpdate: req.body,
-      };
-
       const pendaftaran = await aplicationService.updatePendaftaranUseCase(
         useCaseData
       );

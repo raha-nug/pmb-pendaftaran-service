@@ -52,9 +52,6 @@ model DokumenPersyaratan {
 
   namaDokumen       String    // misal: "KTP", "Raport Semester 5" 
   urlPenyimpanan    String    // Path atau URL ke file di storage
-  statusValidasi    String    @default("MENUNGGU_VALIDASI") // MENUNGGU_VALIDASI, VALID, TIDAK_VALID
-  catatanValidasi   String?
-  isValid           Boolean   @default(false) // Untuk menandai apakah dokumen valid atau tidak
 
   createAt      DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
