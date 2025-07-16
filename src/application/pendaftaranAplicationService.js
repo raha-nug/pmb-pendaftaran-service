@@ -1,6 +1,7 @@
 import * as pendaftaranDomain from "../domain/pendaftaranDomain.js";
 import * as pendaftaranRepository from "../infrastructure/pendaftaranRepository.js";
-import fs from "fs/promises";
+
+import { deleteFromFTP } from "../interfaces/http/middlewares/fileUpload.js";
 
 /**
  * Use Case 1: Membuat data pendaftaran awal (tanpa dokumen).
@@ -14,7 +15,6 @@ export const createInitialPendaftaranUseCase = async (useCaseData) => {
     dataFormulir,
   });
 
-  console.log("State Pendaftaran Awal:", pendaftaranState);
 
   const savedPendaftaran = await pendaftaranRepository.save(pendaftaranState);
 
@@ -77,7 +77,15 @@ export const deleteDokumenUseCase = async ({ dokumenId, userId }) => {
   await pendaftaranRepository.deleteDokumenById(dokumenId);
 
   // 4. Hapus file fisik dari server
-  await fs.unlink(dokumen.urlPenyimpanan);
+  // Ambil path FTP dari URL
+  const url = dokumen.urlPenyimpanan;
+  const parsedUrl = new URL(url);
+  const remotePath = parsedUrl.pathname.slice(1); // Hilangkan '/' di awal
+
+  console.log(remotePath)
+
+  const deleted = await deleteFromFTP(`${remotePath}`);
+  if (!deleted) throw new Error("Gagal menghapus file di server FTP");
 
   return { message: `Dokumen ${dokumen.namaDokumen} berhasil dihapus.` };
 };
@@ -174,7 +182,12 @@ export const deletePendaftaranUseCase = async ({ pendaftaranId, userId }) => {
   // Hapus file fisik terlebih dahulu
   for (const doc of pendaftaran.dokumenPersyaratan) {
     try {
-      await fs.unlink(doc.urlPenyimpanan);
+       const url = doc.urlPenyimpanan;
+       const parsedUrl = new URL(url);
+       const remotePath = parsedUrl.pathname.slice(1); // Hilangkan '/' di awal
+
+       const deleted = await deleteFromFTP(`${remotePath}`);
+       if (!deleted) throw new Error("Gagal menghapus file di server FTP");
     } catch (err) {
       // Log error jika file tidak ditemukan, tapi lanjutkan proses
       console.error(`Gagal menghapus file ${doc.urlPenyimpanan}:`, err.message);

@@ -44,7 +44,7 @@ export const addDokumen = async (req, res) => {
       pendaftaranId: req.params.pendaftaranId,
       userId: req.user.id, // dari middleware otentikasi
       namaDokumen: req.body.namaDokumen || req.file.originalname,
-      urlPenyimpanan: req.file.path,
+      urlPenyimpanan: req.uploadedFileUrl,
     };
 
     const pendaftaran = await aplicationService.addDokumenUseCase(useCaseData);

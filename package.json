@@ -16,6 +16,8 @@
   },
   "dependencies": {
     "@prisma/client": "^6.10.1",
+    "basic-ftp": "^5.0.5",
+    "cors": "^2.8.5",
     "dotenv": "^16.6.1",
     "express": "^5.1.0",
     "multer": "^2.0.1",
