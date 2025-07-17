@@ -5,6 +5,27 @@ import * as aplicationService from "../../application/pendaftaranAplicationServi
  */
 export const createInitialPendaftaran = async (req, res) => {
   try {
+    if (req.user.role === "ADMIN") {
+      res.status(403).json({ message: "Admin tidak diperkenankan mendaftar" });
+    }
+
+    const token = req.headers.authorization?.split(" ")[1];
+
+    const response = await fetch(
+      `${process.env.GELOMBANG_SERVICE_URL}/api/isValidGelombang/${req.body.gelombangId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    const gelombang = await response.json();
+    if (gelombang.message) {
+      return res.status(400).json({
+        message: "Id Gelombang tidak valid",
+      });
+    }
+
     if (req.user.role !== "CALON_MAHASISWA") {
       return res
         .status(403)
@@ -109,12 +130,9 @@ export const updatePendaftaran = async (req, res) => {
   try {
     const useCaseData = {
       pendaftaranId: req.params.pendaftaranId,
-      userId:req.user.id,
-      pendaftaranData : req.body
+      userId: req.user.id,
+      pendaftaranData: req.body,
     };
-
-    console.log("PENDAFTAR CONTROLLER", useCaseData)
-
 
     if (req.user.role === "ADMIN") {
       const pendaftaran = await aplicationService.validatePendaftaranUseCase(
