@@ -15,7 +15,7 @@ router.get(
   pendaftaranController.getPendaftaranById
 );
 
-router.put("/:pendaftaranId", pendaftaranController.updatePendaftaran);
+router.put("/pendaftaran/:pendaftaranId", pendaftaranController.updatePendaftaran);
 
 router.delete(
   "/pendaftaran/:pendaftaranId",
