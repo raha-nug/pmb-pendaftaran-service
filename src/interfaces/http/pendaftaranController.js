@@ -101,7 +101,6 @@ export const getAllPendaftaran = async (req, res) => {
       data: pendaftaranList,
     });
   } catch (error) {
-    console.error("Error fetching pendaftaran list:", error);
     res.status(500).json({ message: "Gagal mengambil daftar pendaftaran." });
   }
 };
@@ -162,14 +161,21 @@ export const updatePendaftaran = async (req, res) => {
 
 export const deletePendaftaran = async (req, res) => {
   try {
-    const useCaseData = {
-      pendaftaranId: req.params.pendaftaranId,
-      userId: req.user.id,
-    };
-    const result = await aplicationService.deletePendaftaranUseCase(
-      useCaseData
-    );
-    res.status(200).json(result);
+    await aplicationService.deletePendaftaranUseCase(req.params.pendaftaranId);
+    res.status(200).json({
+      message: `Berhasil menghapus pendaftaran by id ${req.params.pendaftaranId}`,
+    });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+export const verifyPendaftaran = async (req, res) => {
+  try {
+    await aplicationService.getPendaftaranByIdUseCase(req.params.pendaftaranId);
+    res.status(200).json({
+      message: "Terverifikasi",
+    });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
