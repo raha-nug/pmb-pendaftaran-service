@@ -12,7 +12,7 @@ export const createInitialPendaftaran = async (req, res) => {
     const token = req.headers.authorization?.split(" ")[1];
 
     const response = await fetch(
-      `${process.env.GELOMBANG_SERVICE_URL}/api/isValidGelombang/${req.body.gelombangId}`,
+      `${process.env.GELOMBANG_SERVICE_URL}/api/verifyGelombang/${req.body.gelombangId}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -20,7 +20,7 @@ export const createInitialPendaftaran = async (req, res) => {
       }
     );
     const gelombang = await response.json();
-    if (gelombang.message) {
+    if (gelombang.message !== "Terverifikasi" ) {
       return res.status(400).json({
         message: "Id Gelombang tidak valid",
       });
