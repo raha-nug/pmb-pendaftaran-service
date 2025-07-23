@@ -112,9 +112,6 @@ export const validatePendaftaranUseCase = async (useCaseData) => {
     pendaftaranBaru
   );
 
-  // Terbitkan event
-  // publishEvent('PendaftaranDivalidasiEvent', { pendaftaranId, isValid });
-
   return savedPendaftaran;
 };
 

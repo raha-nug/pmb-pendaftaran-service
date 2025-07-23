@@ -20,7 +20,7 @@ export const createInitialPendaftaran = async (req, res) => {
       }
     );
     const gelombang = await response.json();
-    if (gelombang.message !== "Terverifikasi" ) {
+    if (gelombang.message !== "Terverifikasi") {
       return res.status(400).json({
         message: "Id Gelombang tidak valid",
       });
@@ -136,6 +136,17 @@ export const updatePendaftaran = async (req, res) => {
     if (req.user.role === "ADMIN") {
       const pendaftaran = await aplicationService.validatePendaftaranUseCase(
         useCaseData
+      );
+
+      await fetch(
+        `${process.env.SELEKSI_SERVICE_URL}/api/seleksi/internal/inisiasi-sesi`,
+        {
+          body: {
+            pendaftaranId: pendaftaran.id,
+            calonMahasiswaId: pendaftaran.calonMahasiswaId,
+            gelombangId: pendaftaran.gelombangId,
+          },
+        }
       );
 
       return res.status(200).json({
