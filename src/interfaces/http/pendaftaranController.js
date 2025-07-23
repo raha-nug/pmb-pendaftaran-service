@@ -41,6 +41,22 @@ export const createInitialPendaftaran = async (req, res) => {
     const pendaftaran = await aplicationService.createInitialPendaftaranUseCase(
       useCaseData
     );
+
+    await fetch(
+      `${process.env.NOTIFIKASI_SERVICE_URL}/api/notifikasi/handle-event`,
+      {
+        body: {
+          eventType: "PendaftaranBerhasilDiajukanEvent",
+          payload: {
+            nama: pendaftaran.dataFormulir.nama,
+            email: pendaftaran.dataFormulir.email,
+            nomorPendaftaran: pendaftaran.nomorPendaftaran,
+          },
+        },
+        method: "POST",
+      }
+    );
+
     res.status(201).json({
       message: "Pendaftaran awal berhasil dibuat. Silakan unggah dokumen Anda.",
       data: pendaftaran,
@@ -146,6 +162,7 @@ export const updatePendaftaran = async (req, res) => {
             calonMahasiswaId: pendaftaran.calonMahasiswaId,
             gelombangId: pendaftaran.gelombangId,
           },
+          method: "POST",
         }
       );
 
