@@ -15,7 +15,10 @@ router.get(
   pendaftaranController.getPendaftaranById
 );
 
-router.put("/pendaftaran/:pendaftaranId", pendaftaranController.updatePendaftaran);
+router.put(
+  "/pendaftaran/:pendaftaranId",
+  pendaftaranController.updatePendaftaran
+);
 
 router.delete(
   "/pendaftaran/:pendaftaranId",
@@ -39,4 +42,20 @@ router.delete(
   pendaftaranController.deleteDokumen
 );
 
+router.post(
+  "/pendaftaran/:pendaftaranId/beasiswa",
+  pendaftaranController.submitAplikasiBeasiswa
+);
+
+router.get(
+  "/beasiswa/aplikasi",
+  // authenticateToken, requireAdmin,
+  pendaftaranController.getAllAplikasiBeasiswa
+);
+
+// Mengubah status satu aplikasi beasiswa
+router.put(
+  "/beasiswa/aplikasi/:aplikasiId/status",
+  pendaftaranController.updateStatusBeasiswa
+);
 export default router;

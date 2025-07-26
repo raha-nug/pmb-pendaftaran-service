@@ -81,3 +81,54 @@ export const updateDataFormulir = (pendaftaran, dataFormulirBaru) => {
 
   return updatedDataFormulir;
 };
+
+export const createAplikasiBeasiswa = (pendaftaran, dataBeasiswa) => {
+  // Aturan bisnis untuk status pendaftaran tetap sama
+  if (pendaftaran.status !== "DATA_LENGKAP") {
+    throw new Error(
+      "Anda hanya bisa mengajukan beasiswa setelah data pendaftaran Anda divalidasi."
+    );
+  }
+
+  // Validasi properti di dalam objek JSON
+  const { dataPengajuan } = dataBeasiswa;
+  if (
+    !dataPengajuan ||
+    !dataPengajuan.jenisBeasiswa ||
+    !dataPengajuan.alasanPengajuan
+  ) {
+    throw new Error(
+      "Jenis beasiswa dan alasan pengajuan wajib diisi di dalam form."
+    );
+  }
+
+
+  return {
+    pendaftaranId: pendaftaran.id,
+    dataPengajuan: dataPengajuan,
+  };
+};
+
+export const updateStatusBeasiswa = (aplikasi, newStatus, catatanAdmin) => {
+  // Aturan bisnis: misalnya, status yang sudah final (disetujui/ditolak) tidak bisa diubah lagi.
+  if (
+    aplikasi.statusAplikasi === "DISETUJUI" ||
+    aplikasi.statusAplikasi === "DITOLAK"
+  ) {
+    throw new Error(
+      `Status yang sudah ${aplikasi.statusAplikasi} tidak dapat diubah lagi.`
+    );
+  }
+
+  // Pastikan status baru valid (meskipun sudah dihandle oleh enum, validasi eksplisit itu baik)
+  const validStatus = ["DIPROSES", "DISETUJUI", "DITOLAK"];
+  if (!validStatus.includes(newStatus)) {
+    throw new Error(`Status baru tidak valid: ${newStatus}`);
+  }
+
+  return {
+    ...aplikasi,
+    statusAplikasi: newStatus,
+    catatanAdmin: catatanAdmin || aplikasi.catatanAdmin, // Gunakan catatan baru jika ada
+  };
+};

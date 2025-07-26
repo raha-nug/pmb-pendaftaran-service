@@ -18,7 +18,15 @@ enum StatusPendaftaran {
   BARU_MENGISI_FORMULIR
   MENUNGGU_VALIDASI_ADMIN
   DATA_LENGKAP
-  PERLU_PERBAIKAN
+  PERLU_PERBAIKAN                 // Status final
+}
+
+
+enum StatusBeasiswa {
+  DIAJUKAN
+  DIPROSES
+  DISETUJUI
+  DITOLAK
 }
 
 model Pendaftaran {
@@ -40,6 +48,7 @@ model Pendaftaran {
 
   // Relasi ke Dokumen yang merupakan bagian dari Aggregate Pendaftaran
   dokumenPersyaratan DokumenPersyaratan[]
+  aplikasiBeasiswa  AplikasiBeasiswa?
 
   @@map("pendaftaran")
   @@index([calonMahasiswaId])
@@ -57,4 +66,21 @@ model DokumenPersyaratan {
   updatedAt     DateTime  @updatedAt
 
   @@map("dokumen_persyaratan")
+}
+
+
+model AplikasiBeasiswa {
+  id             String    @id @default(cuid())
+
+  pendaftaranId  String    @unique
+  pendaftaran    Pendaftaran @relation(fields: [pendaftaranId], references: [id])
+  
+  dataPengajuan  Json      // Tetap menggunakan JSON untuk fleksibilitas form
+  
+  statusAplikasi StatusBeasiswa @default(DIAJUKAN)
+  catatanAdmin   String?
+  
+  diajukanPada   DateTime  @default(now())
+  
+  @@map("aplikasi_beasiswa")
 }

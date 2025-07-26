@@ -45,8 +45,8 @@ export const createInitialPendaftaran = async (req, res) => {
     await fetch(
       `${process.env.NOTIFIKASI_SERVICE_URL}/api/notifikasi/handle-event`,
       {
-        headers:{
-          "Content-Type":"application/json"
+        headers: {
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           eventType: "PendaftaranBerhasilDiajukanEvent",
@@ -209,6 +209,74 @@ export const verifyPendaftaran = async (req, res) => {
     await aplicationService.getPendaftaranByIdUseCase(req.params.pendaftaranId);
     res.status(200).json({
       message: "Terverifikasi",
+    });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+export const submitAplikasiBeasiswa = async (req, res) => {
+  try {
+    const useCaseData = {
+      pendaftaranId: req.params.pendaftaranId,
+      userId: req.user.id,
+
+      formData: {
+        dataPengajuan: req.body.dataPengajuan,
+      },
+    };
+
+    const aplikasi = await aplicationService.submitAplikasiBeasiswaUseCase(
+      useCaseData
+    );
+    res.status(201).json({
+      message: "Pengajuan beasiswa berhasil dikirim.",
+      data: aplikasi,
+    });
+  } catch (error) {
+    // Blok catch menjadi lebih sederhana karena tidak ada file cleanup
+    res.status(400).json({ message: error.message });
+  }
+};
+
+export const getAllAplikasiBeasiswa = async (req, res) => {
+  try {
+    if (req.user.role !== "ADMIN") {
+      return res.status(401).json({
+        message: "Role Admin diperlukan",
+      });
+    }
+    const aplikasi = await aplicationService.getAllAplikasiBeasiswaUseCase();
+    res
+      .status(200)
+      .json({
+        message: "Aplikasi beasiswa berhasil didapatkan",
+        data: aplikasi,
+      });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const updateStatusBeasiswa = async (req, res) => {
+  try {
+
+    if(req.user.role !== "ADMIN"){
+      return res.status(401).json({
+        message: "Role Admin diperlukan"
+      })
+    }
+
+    const { newStatus, catatanAdmin } = req.body;
+    const useCaseData = {
+      aplikasiId: req.params.aplikasiId,
+      newStatus,
+      catatanAdmin,
+    };
+    const aplikasi = await aplicationService.adminUpdateStatusBeasiswaUseCase(useCaseData);
+    res.status(200).json({
+      message: `Status berhasil diubah menjadi ${newStatus}`,
+      data: aplikasi,
     });
   } catch (error) {
     res.status(400).json({ message: error.message });

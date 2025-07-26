@@ -80,3 +80,37 @@ export const addDokumenByPendaftaran = async (
     },
   });
 };
+
+
+export const saveAplikasiBeasiswa = async (aplikasiData) => {
+  return prisma.aplikasiBeasiswa.create({
+    data: aplikasiData,
+  });
+};
+
+
+export const findAplikasiBeasiswaById = async (id) => {
+  return prisma.aplikasiBeasiswa.findUnique({ where: { id } });
+};
+
+export const findAllAplikasiBeasiswa = async () => {
+  return prisma.aplikasiBeasiswa.findMany({
+    orderBy: { diajukanPada: "desc" },
+    // Sertakan data pendaftaran induk agar admin tahu siapa yang mengajukan
+    include: {
+      pendaftaran: {
+        select: {
+          calonMahasiswaId: true,
+          dataFormulir: true,
+        },
+      },
+    },
+  });
+};
+
+export const updateAplikasiBeasiswa = async (id, data) => {
+  return prisma.aplikasiBeasiswa.update({
+    where: { id },
+    data: data,
+  });
+};

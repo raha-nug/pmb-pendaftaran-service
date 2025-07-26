@@ -191,3 +191,61 @@ export const deletePendaftaranUseCase = async ({ pendaftaranId, userId }) => {
   return { message: "Pendaftaran dan semua dokumen terkait berhasil dihapus." };
 };
 
+
+
+export const submitAplikasiBeasiswaUseCase = async (useCaseData) => {
+  const { pendaftaranId, userId, formData } = useCaseData;
+
+  const pendaftaranInduk = await pendaftaranRepository.findById(pendaftaranId);
+  if (!pendaftaranInduk) throw new Error("Pendaftaran tidak ditemukan.");
+  if (pendaftaranInduk.calonMahasiswaId !== userId)
+    throw new Error("Akses ditolak.");
+  if (pendaftaranInduk.aplikasiBeasiswa)
+    throw new Error("Anda sudah pernah mengajukan beasiswa.");
+
+  // --- PERUBAHAN DI SINI ---
+  // 'dokumen' tidak lagi diproses
+  const aplikasiData = pendaftaranDomain.createAplikasiBeasiswa(
+    pendaftaranInduk,
+    formData // formData sekarang hanya berisi dataPengajuan
+  );
+
+  return pendaftaranRepository.saveAplikasiBeasiswa(aplikasiData);
+};
+
+export const getAllAplikasiBeasiswaUseCase = async () => {
+  return pendaftaranRepository.findAllAplikasiBeasiswa();
+};
+
+export const adminUpdateStatusBeasiswaUseCase = async ({
+  aplikasiId,
+  newStatus,
+  catatanAdmin,
+}) => {
+  const aplikasiSaatIni = await pendaftaranRepository.findAplikasiBeasiswaById(
+    aplikasiId
+  );
+  if (!aplikasiSaatIni) {
+    throw new Error("Aplikasi beasiswa tidak ditemukan.");
+  }
+
+  // Panggil fungsi domain untuk validasi dan mendapatkan state baru
+  const aplikasiBaru = pendaftaranDomain.updateStatusBeasiswa(
+    aplikasiSaatIni,
+    newStatus,
+    catatanAdmin
+  );
+
+  // Simpan perubahan ke database
+  const updatedAplikasi = await pendaftaranRepository.updateAplikasiBeasiswa(
+    aplikasiId,
+    aplikasiBaru
+  );
+
+  // Di sini Anda bisa menerbitkan event 'StatusBeasiswaDiperbaruiEvent'
+  // untuk memberitahu Notifikasi Service agar mengirim email ke mahasiswa.
+  // publishEvent('StatusBeasiswaDiperbaruiEvent', { ... });
+
+  return updatedAplikasi;
+};
+
