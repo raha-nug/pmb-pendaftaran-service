@@ -164,7 +164,7 @@ export const updatePendaftaranUseCase = async ({
   return updatedPendaftaran;
 };
 
-export const deletePendaftaranUseCase = async ({ pendaftaranId, userId }) => {
+export const deletePendaftaranUseCase = async (pendaftaranId, userId) => {
   const pendaftaran = await pendaftaranRepository.findById(pendaftaranId);
   if (!pendaftaran) throw new Error("Pendaftaran tidak ditemukan.");
   if (pendaftaran.calonMahasiswaId !== userId)
@@ -190,8 +190,6 @@ export const deletePendaftaranUseCase = async ({ pendaftaranId, userId }) => {
   await pendaftaranRepository.deleteById(pendaftaranId);
   return { message: "Pendaftaran dan semua dokumen terkait berhasil dihapus." };
 };
-
-
 
 export const submitAplikasiBeasiswaUseCase = async (useCaseData) => {
   const { pendaftaranId, userId, formData } = useCaseData;
@@ -248,4 +246,3 @@ export const adminUpdateStatusBeasiswaUseCase = async ({
 
   return updatedAplikasi;
 };
-

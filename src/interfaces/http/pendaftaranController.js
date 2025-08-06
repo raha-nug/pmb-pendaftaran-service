@@ -195,7 +195,10 @@ export const updatePendaftaran = async (req, res) => {
 
 export const deletePendaftaran = async (req, res) => {
   try {
-    await aplicationService.deletePendaftaranUseCase(req.params.pendaftaranId);
+    await aplicationService.deletePendaftaranUseCase(
+      req.params.pendaftaranId,
+      req.user.id
+    );
     res.status(200).json({
       message: `Berhasil menghapus pendaftaran by id ${req.params.pendaftaranId}`,
     });
@@ -247,12 +250,10 @@ export const getAllAplikasiBeasiswa = async (req, res) => {
       });
     }
     const aplikasi = await aplicationService.getAllAplikasiBeasiswaUseCase();
-    res
-      .status(200)
-      .json({
-        message: "Aplikasi beasiswa berhasil didapatkan",
-        data: aplikasi,
-      });
+    res.status(200).json({
+      message: "Aplikasi beasiswa berhasil didapatkan",
+      data: aplikasi,
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -260,11 +261,10 @@ export const getAllAplikasiBeasiswa = async (req, res) => {
 
 export const updateStatusBeasiswa = async (req, res) => {
   try {
-
-    if(req.user.role !== "ADMIN"){
+    if (req.user.role !== "ADMIN") {
       return res.status(401).json({
-        message: "Role Admin diperlukan"
-      })
+        message: "Role Admin diperlukan",
+      });
     }
 
     const { newStatus, catatanAdmin } = req.body;
@@ -273,7 +273,9 @@ export const updateStatusBeasiswa = async (req, res) => {
       newStatus,
       catatanAdmin,
     };
-    const aplikasi = await aplicationService.adminUpdateStatusBeasiswaUseCase(useCaseData);
+    const aplikasi = await aplicationService.adminUpdateStatusBeasiswaUseCase(
+      useCaseData
+    );
     res.status(200).json({
       message: `Status berhasil diubah menjadi ${newStatus}`,
       data: aplikasi,
