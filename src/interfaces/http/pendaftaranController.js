@@ -52,7 +52,7 @@ export const createInitialPendaftaran = async (req, res) => {
           eventType: "PendaftaranBerhasilDiajukanEvent",
           payload: {
             nama: pendaftaran.dataFormulir.nama,
-            email: pendaftaran.dataFormulir.email,
+            email: pendaftaran.dataFormulir.email_aktif,
             nomorPendaftaran: pendaftaran.nomorPendaftaran,
           },
         }),
