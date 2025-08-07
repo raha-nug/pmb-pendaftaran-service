@@ -145,7 +145,7 @@ export const getPendaftaranById = async (req, res) => {
 };
 export const getPendaftaranByCalonMahasiswaId = async (req, res) => {
   try {
-    const pendaftaranId = req.params.pendaftaranId;
+    const pendaftaranId = req.params.calonMahasiswaId;
     const pendaftaran = await aplicationService.getPendaftaranByCalonMahasiswaIdUseCase(
       pendaftaranId
     );
