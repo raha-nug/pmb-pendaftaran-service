@@ -41,7 +41,7 @@ export const deleteById = async (id) => {
 };
 
 export const findByCalonMahasiswaId = async (calonMahasiswaId) => {
-  return prisma.pendaftaran.findMany({
+  return prisma.pendaftaran.findUnique({
     where: { calonMahasiswaId },
     include: { dokumenPersyaratan: true },
   });

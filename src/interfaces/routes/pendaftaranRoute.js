@@ -14,6 +14,10 @@ router.get(
   "/pendaftaran/:pendaftaranId",
   pendaftaranController.getPendaftaranById
 );
+router.get(
+  "/pendaftaran/:calonMahasiswaId",
+  pendaftaranController.getPendaftaranByCalonMahasiswaId
+);
 
 router.put(
   "/pendaftaran/:pendaftaranId",

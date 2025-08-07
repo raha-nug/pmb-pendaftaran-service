@@ -143,6 +143,25 @@ export const getPendaftaranById = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+export const getPendaftaranByCalonMahasiswaId = async (req, res) => {
+  try {
+    const pendaftaranId = req.params.pendaftaranId;
+    const pendaftaran = await aplicationService.getPendaftaranByCalonMahasiswaIdUseCase(
+      pendaftaranId
+    );
+
+    if (!pendaftaran) {
+      return res.status(404).json({ message: "Pendaftaran tidak ditemukan." });
+    }
+
+    res.status(200).json({
+      message: "Pendaftaran berhasil diambil.",
+      data: pendaftaran,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
 export const updatePendaftaran = async (req, res) => {
   try {
