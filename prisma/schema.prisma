@@ -73,7 +73,7 @@ model AplikasiBeasiswa {
   id             String    @id @default(cuid())
 
   pendaftaranId  String    @unique
-  pendaftaran    Pendaftaran @relation(fields: [pendaftaranId], references: [id])
+  pendaftaran    Pendaftaran @relation(fields: [pendaftaranId], references: [id],  onDelete: Cascade)
   
   dataPengajuan  Json      // Tetap menggunakan JSON untuk fleksibilitas form
   
