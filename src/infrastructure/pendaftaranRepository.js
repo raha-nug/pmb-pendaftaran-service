@@ -41,9 +41,12 @@ export const deleteById = async (id) => {
 };
 
 export const findByCalonMahasiswaId = async (calonMahasiswaId) => {
-  return prisma.pendaftaran.findUnique({
+  return prisma.pendaftaran.findFirst({
     where: { calonMahasiswaId },
     include: { dokumenPersyaratan: true },
+    orderBy: {
+      createdAt: "desc",
+    },
   });
 
   //if error
@@ -81,13 +84,11 @@ export const addDokumenByPendaftaran = async (
   });
 };
 
-
 export const saveAplikasiBeasiswa = async (aplikasiData) => {
   return prisma.aplikasiBeasiswa.create({
     data: aplikasiData,
   });
 };
-
 
 export const findAplikasiBeasiswaById = async (id) => {
   return prisma.aplikasiBeasiswa.findUnique({ where: { id } });

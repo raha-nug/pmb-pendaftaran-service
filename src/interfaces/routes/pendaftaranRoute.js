@@ -15,7 +15,7 @@ router.get(
   pendaftaranController.getPendaftaranById
 );
 router.get(
-  "/pendaftaran/:calonMahasiswaId",
+  "/pendaftaran/:calonMahasiswaId/mhs-id",
   pendaftaranController.getPendaftaranByCalonMahasiswaId
 );
 
