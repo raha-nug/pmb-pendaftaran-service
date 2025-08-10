@@ -215,14 +215,20 @@ export const getAllAplikasiBeasiswaUseCase = async () => {
   return pendaftaranRepository.findAllAplikasiBeasiswa();
 };
 export const getAplikasiBeasiswaByIdUseCase = async (beasiswaId) => {
-  const beasiswa = pendaftaranRepository.findAplikasiBeasiswaById(beasiswaId);
-  if (!beasiswa) throw Error("Aplikasi beasiswa tidak ditemukan");
+  const beasiswa = await pendaftaranRepository.findAplikasiBeasiswaById(
+    beasiswaId
+  );
+  if (!beasiswa) throw new Error("Aplikasi beasiswa tidak ditemukan");
   return beasiswa;
 };
-export const getAplikasiBeasiswaByPendaftaranIdUseCase = async (beasiswaId) => {
+export const getAplikasiBeasiswaByPendaftaranIdUseCase = async (
+  pendaftaranId
+) => {
   const beasiswa =
-    pendaftaranRepository.findAplikasiBeasiswaByPendaftaranId(beasiswaId);
-  if (!beasiswa) throw Error("Aplikasi beasiswa tidak ditemukan");
+    await pendaftaranRepository.findAplikasiBeasiswaByPendaftaranId(
+      pendaftaranId
+    );
+  if (!beasiswa) throw new Error("Aplikasi beasiswa tidak ditemukan");
   return beasiswa;
 };
 
