@@ -214,6 +214,12 @@ export const submitAplikasiBeasiswaUseCase = async (useCaseData) => {
 export const getAllAplikasiBeasiswaUseCase = async () => {
   return pendaftaranRepository.findAllAplikasiBeasiswa();
 };
+export const getAplikasiBeasiswaByIdUseCase = async (beasiswaId) => {
+  return pendaftaranRepository.findAplikasiBeasiswaById(beasiswaId);
+};
+export const getAplikasiBeasiswaByPendaftaranIdUseCase = async (beasiswaId) => {
+  return pendaftaranRepository.findAplikasiBeasiswaByPendaftaranId(beasiswaId);
+};
 
 export const adminUpdateStatusBeasiswaUseCase = async ({
   aplikasiId,

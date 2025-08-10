@@ -56,6 +56,16 @@ router.get(
   // authenticateToken, requireAdmin,
   pendaftaranController.getAllAplikasiBeasiswa
 );
+router.get(
+  "/beasiswa/aplikasi/:beasiswaId",
+  // authenticateToken, requireAdmin,
+  pendaftaranController.getAplikasiBeasiswaById
+);
+router.get(
+  "/beasiswa/aplikasi/:pendaftaranId/pendaftaran",
+  // authenticateToken, requireAdmin,
+  pendaftaranController.getAplikasiBeasiswaByPendaftaranId
+);
 
 // Mengubah status satu aplikasi beasiswa
 router.put(

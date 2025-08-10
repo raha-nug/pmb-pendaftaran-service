@@ -146,9 +146,10 @@ export const getPendaftaranById = async (req, res) => {
 export const getPendaftaranByCalonMahasiswaId = async (req, res) => {
   try {
     const pendaftaranId = req.params.calonMahasiswaId;
-    const pendaftaran = await aplicationService.getPendaftaranByCalonMahasiswaIdUseCase(
-      pendaftaranId
-    );
+    const pendaftaran =
+      await aplicationService.getPendaftaranByCalonMahasiswaIdUseCase(
+        pendaftaranId
+      );
 
     if (!pendaftaran) {
       return res.status(404).json({ message: "Pendaftaran tidak ditemukan." });
@@ -269,6 +270,28 @@ export const getAllAplikasiBeasiswa = async (req, res) => {
       });
     }
     const aplikasi = await aplicationService.getAllAplikasiBeasiswaUseCase();
+    res.status(200).json({
+      message: "Aplikasi beasiswa berhasil didapatkan",
+      data: aplikasi,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+export const getAplikasiBeasiswaById = async (req, res) => {
+  try {
+    const aplikasi = await aplicationService.getAplikasiBeasiswaByIdUseCase(req.params.beasiswaId);
+    res.status(200).json({
+      message: "Aplikasi beasiswa berhasil didapatkan",
+      data: aplikasi,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+export const getAplikasiBeasiswaByPendaftaranId = async (req, res) => {
+  try {
+    const aplikasi = await aplicationService.getAplikasiBeasiswaByPendaftaranIdUseCase(req.params.pendaftaranId);
     res.status(200).json({
       message: "Aplikasi beasiswa berhasil didapatkan",
       data: aplikasi,

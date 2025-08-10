@@ -93,6 +93,9 @@ export const saveAplikasiBeasiswa = async (aplikasiData) => {
 export const findAplikasiBeasiswaById = async (id) => {
   return prisma.aplikasiBeasiswa.findUnique({ where: { id } });
 };
+export const findAplikasiBeasiswaByPendaftaranId = async (pendaftaranId) => {
+  return prisma.aplikasiBeasiswa.findUnique({ where: { pendaftaranId } });
+};
 
 export const findAllAplikasiBeasiswa = async () => {
   return prisma.aplikasiBeasiswa.findMany({
