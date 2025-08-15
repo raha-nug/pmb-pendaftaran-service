@@ -51,8 +51,8 @@ export const createInitialPendaftaran = async (req, res) => {
         body: JSON.stringify({
           eventType: "PendaftaranBerhasilDiajukanEvent",
           payload: {
-            nama: pendaftaran.dataFormulir.nama,
-            email: pendaftaran.dataFormulir.email_aktif,
+            nama: req.user.nama,
+            email: req.user.email,
             nomorPendaftaran: pendaftaran.nomorPendaftaran,
           },
         }),
