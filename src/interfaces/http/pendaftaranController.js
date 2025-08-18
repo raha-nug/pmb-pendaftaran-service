@@ -187,6 +187,7 @@ export const updatePendaftaran = async (req, res) => {
             pendaftaranId: pendaftaran.id,
             calonMahasiswaId: pendaftaran.calonMahasiswaId,
             gelombangId: pendaftaran.gelombangId,
+            nomorPeserta: pendaftaran.nomorPendaftaran,
           }),
           method: "POST",
         }
@@ -280,7 +281,9 @@ export const getAllAplikasiBeasiswa = async (req, res) => {
 };
 export const getAplikasiBeasiswaById = async (req, res) => {
   try {
-    const aplikasi = await aplicationService.getAplikasiBeasiswaByIdUseCase(req.params.beasiswaId);
+    const aplikasi = await aplicationService.getAplikasiBeasiswaByIdUseCase(
+      req.params.beasiswaId
+    );
     res.status(200).json({
       message: "Aplikasi beasiswa berhasil didapatkan",
       data: aplikasi,
@@ -291,7 +294,10 @@ export const getAplikasiBeasiswaById = async (req, res) => {
 };
 export const getAplikasiBeasiswaByPendaftaranId = async (req, res) => {
   try {
-    const aplikasi = await aplicationService.getAplikasiBeasiswaByPendaftaranIdUseCase(req.params.pendaftaranId);
+    const aplikasi =
+      await aplicationService.getAplikasiBeasiswaByPendaftaranIdUseCase(
+        req.params.pendaftaranId
+      );
     res.status(200).json({
       message: "Aplikasi beasiswa berhasil didapatkan",
       data: aplikasi,
