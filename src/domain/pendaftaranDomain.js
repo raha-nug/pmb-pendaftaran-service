@@ -3,8 +3,6 @@ const prisma = new PrismaClient();
 
 async function generateNomorPendaftaran(gelombangId) {
   const tahun = new Date().getFullYear();
-  const kodeGelombang = gelombangId.toString().padStart(2, "0");
-
   // Hitung jumlah pendaftaran sebelumnya untuk tahun & gelombang yang sama
   const jumlahSebelumnya = await prisma.pendaftaran.count({
     where: {
@@ -19,7 +17,7 @@ async function generateNomorPendaftaran(gelombangId) {
   // Nomor urut selanjutnya (increment)
   const nomorUrut = (jumlahSebelumnya + 1).toString().padStart(4, "0");
 
-  const nomorPendaftaran = `${tahun}-${kodeGelombang}-${nomorUrut}`;
+  const nomorPendaftaran = `PMB-${tahun}-${nomorUrut}`;
   return nomorPendaftaran;
 }
 
@@ -101,7 +99,6 @@ export const createAplikasiBeasiswa = (pendaftaran, dataBeasiswa) => {
       "Jenis beasiswa dan alasan pengajuan wajib diisi di dalam form."
     );
   }
-
 
   return {
     pendaftaranId: pendaftaran.id,
